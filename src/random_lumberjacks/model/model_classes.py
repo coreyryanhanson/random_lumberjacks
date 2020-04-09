@@ -9,8 +9,10 @@ from sklearn.metrics import mean_squared_error, accuracy_score, f1_score, roc_au
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, PolynomialFeatures
 
-#Incomplete function to handle models/grid search.
+
 class ModelSwitcher(object):
+    """Incomplete function to handle models/grid search."""
+
     def __init__(self, data, duplicate=False):
         self.duplicate = duplicate
         self._instantiate_data(data)
@@ -21,9 +23,11 @@ class ModelSwitcher(object):
         else:
             self.data = deepcopy(data)
 
-#An object that manages the workflow for dummy variables, transforming features, polynomial features, class balancing,
-# and scaling data.
+
 class DataPreprocessor(object):
+    """An object that manages the workflow for dummy variables, transforming features, polynomial features, class balancing,
+    and scaling data."""
+
     def __init__(self, df, target, cat_features={}, cont_features={}, poly_features={}, create_dummies=False,
                  scale_dummies=False):
         self.df = df
@@ -33,9 +37,10 @@ class DataPreprocessor(object):
         self.X = pd.concat([df[self.cols.drop(labels=self.cols_generated_dummies)], self.dummies], axis=1)
         self.y = df[target]
 
-    #Creates various attributes storing column names from specifically structured dictionaries for the
-    # categorical and continuous variables.
     def _set_features(self, target, cat_features, cont_features, poly_features):
+        """Creates various attributes storing column names from specifically structured dictionaries for the
+        categorical and continuous variables."""
+
         self._parse_poly_dict(poly_features)
         self._get_cat_features(cat_features)
         self._get_cont_features(cont_features)
@@ -43,8 +48,9 @@ class DataPreprocessor(object):
         self.cols = self.cols_initial
         self.target = target
 
-    #Gathers categorical column name information and creates corresponding attributes.
     def _get_cat_features(self, feature_dict):
+        """Gathers categorical column name information and creates corresponding attributes."""
+
         self.cols_nominal = self._get_indiv_feature(feature_dict, "nominal_features")
         self.cols_standard_dummies = self._get_indiv_feature(feature_dict, "standard_dummies")
         self.cols_impute_dummies = self._get_indiv_feature(feature_dict, "impute_dummies")
@@ -58,8 +64,10 @@ class DataPreprocessor(object):
         self.cols_dummies = self.cols_dummies.union(self.cols_generated_dummies, sort=False)
         self.cols_categorical = self.cols_nominal.union(self.cols_dummies, sort=False)
 
-    # Gathers continuous column name information and creates corresponding attributes, calling transformation functions if specified.
     def _get_cont_features(self, feature_dict):
+        """Gathers continuous column name information and creates corresponding attributes, calling
+        transformation functions if specified."""
+
         transformed_dict = self._get_feature_group(feature_dict, "transformed")
         self.cols_linear = self._get_indiv_feature(feature_dict, "untransformed")
         if transformed_dict:
@@ -69,9 +77,10 @@ class DataPreprocessor(object):
             self.cols_transformed = pd.Index([])
             self.cols_continuous = self.cols_linear
 
-    #Gathers transformed features in the dictionary for continous features. New transformed columns are performed for whatever
-    # transformations are specified.
     def _get_trans_features(self, transformed_dict):
+        """Gathers transformed features in the dictionary for continous features. New transformed columns are performed for whatever
+        ransformations are specified."""
+
         logged = self._get_feature_group(transformed_dict, "logged")
         pow = self._get_feature_group(transformed_dict, "exp")
         self.cols_logged = pd.Index([])
@@ -81,16 +90,19 @@ class DataPreprocessor(object):
             pass
         self.cols_transformed = self.cols_logged
 
-    #Checks the for the existence of a key in a nested dictionary.
     def _get_feature_group(self, feature_dict, key):
+        """Checks the for the existence of a key in a nested dictionary."""
+
         return feature_dict.get(key)
 
-    #Checks a specific category of features being present in the passed dictionary returning an empty list if no results.
     def _get_indiv_feature(self, feature_dict, key, default=[]):
+        """Checks a specific category of features being present in the passed dictionary returning an empty list if no results."""
+
         return pd.Index(feature_dict.get(key, default))
 
-    #Performs log transformations and gathers the new column names.
     def _log_features(self, logged_dict):
+        """Performs log transformations and gathers the new column names."""
+
         for column, base in logged_dict.items():
             if base:
                 new_col_name = f"{column}_log_b{base}"
@@ -100,8 +112,9 @@ class DataPreprocessor(object):
             self._manage_poly_renames(column, pd.Index([new_col_name]))
             self.cols_logged = self.cols_logged.append(pd.Index([new_col_name]))
 
-    # Generates dummy variables from a list of categorical columns.
     def _generate_dummies(self):
+        """Generates dummy variables from a list of categorical columns."""
+
         self.dummies = pd.DataFrame()
         print("Creating Dummies")
         for column in self.cols_nominal:
@@ -125,14 +138,16 @@ class DataPreprocessor(object):
         self.polynomial = {"method":poly_dict.get("method", "all")}
         self.polynomial["columns"] = pd.Index(poly_dict.get("columns", []))
 
-    #Performs a train_test split.
     def _train_test_split(self):
+        """Performs a train_test split."""
+
         X, y = self.X, self.y
         X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=self.test_size, random_state=self.random_state)
         self.X_train, self.X_test, self.y_train, self.y_test = X_train, X_test, y_train, y_test
 
-    #Creates a scaler attribute fit to the data loaded in the object.
     def _fit_scale(self):
+        """Creates a scaler attribute fit to the data loaded in the object."""
+
         self._choose_scaled_columns()
         if self.scale_type == "standard":
             print("Using standard scaler")
@@ -146,8 +161,9 @@ class DataPreprocessor(object):
             return
         self.scaler.fit(self.X_train[self.cols_scaled])
 
-    #Rescales the data with the saved scalar attribute.
     def _rescale(self):
+        """Rescales the data with the saved scalar attribute."""
+
         if self.scale_type == False:
             print("Skipping scaling")
             return
@@ -163,15 +179,17 @@ class DataPreprocessor(object):
         self.X_train[columns] = X_train[columns]
         self.X_test[columns] = X_test[columns]
 
-    #Executes the scaling but preserves the index and returns it to a DataFrame.
     def _transform_scale(self, data):
+        """Executes the scaling but preserves the index and returns it to a DataFrame."""
+
         to_transform = data[self.cols_scaled]
         indices = to_transform.index
         scaled = self.scaler.transform(to_transform)
         return pd.DataFrame(scaled, columns=self.cols_scaled, index=indices)
 
-    #Performs class balancing using the algorithm indicated in the arguments.
     def _class_imbalance(self):
+        """Performs class balancing using the algorithm indicated in the arguments."""
+
         df = pd.concat([self.X_train, self.y_train], axis=1)
         if self.balance_class == "upsample":
             print("Performing upsample")
@@ -188,8 +206,9 @@ class DataPreprocessor(object):
         else:
             print("Skipping class imbalance functions")
 
-    #Performs a random choice to upsample/downsample all values to those with the maximum or minimum counts.
     def _simple_resample(self, df, down=False):
+        """Performs a random choice to upsample/downsample all values to those with the maximum or minimum counts."""
+
         target = self.target
         groups = [item for item in df[target].unique()]
         counts = {group: df[df[target] == group][target].count() for group in groups}
@@ -206,8 +225,9 @@ class DataPreprocessor(object):
             new_df = pd.concat([new_df, resampled])
         self.X_train, self.y_train = new_df.drop(self.target, axis=1), new_df[self.target]
 
-    #Performs a SMOTE upsampling of the data. If there are nominal columns detected, it will change SMOTE algorithms.
     def _smote_data(self):
+        """Performs a SMOTE upsampling of the data. If there are nominal columns detected, it will change SMOTE algorithms."""
+
         if self.cols_nominal.size > 0:
             cats = self.X_train.columns.isin(self.cols_nominal)
             sm = SMOTENC(categorical_features=cats, sampling_strategy='not majority', random_state=self.random_state)
@@ -215,16 +235,18 @@ class DataPreprocessor(object):
             sm = SMOTE(sampling_strategy='not majority', random_state=self.random_state)
         self.X_train, self.y_train = sm.fit_sample(self.X_train, self.y_train)
 
-    #Performs tomek links. Can not handle nominal values.
     def _tomek_data(self):
+        """Performs tomek links. Can not handle nominal values."""
+
         if self.cols_nominal.size > 0:
             print("Skipping Tomek Links. Cannot perform with raw categorical data. Create dummies to use.")
             return
         tl = TomekLinks()
         self.X_train, self.y_train = tl.fit_sample(self.X_train, self.y_train)
 
-    #Creates polynomial features and creates a selection of those columns.
     def _poly_features(self):
+        """Creates polynomial features and creates a selection of those columns."""
+
         if type(self.poly_degree) == int:
             print(f"Getting polynomial features of degree {self.poly_degree}")
             orig_columns = self._choose_poly_columns()
@@ -243,9 +265,9 @@ class DataPreprocessor(object):
             self.cols_polynomial = pd.Index([])
             self.X = self.X[self.cols_initial]
 
-    #Creates a column list for polynomial features including or excluding dummy variables and transformed features depending
-    # on arguments.
     def _choose_poly_columns(self):
+        """Creates a column list for polynomial features including or excluding dummy variables and transformed features depending
+        on arguments."""
 
         baseline = self.cols_initial.drop(labels=self.cols_nominal)
         sel = self.polynomial["columns"]
@@ -265,15 +287,17 @@ class DataPreprocessor(object):
         columns = baseline[mask]
         return columns
 
-    #Determines whether or not dummy variables will be scaled based on an initialization argument.
     def _choose_scaled_columns(self):
+        """Determines whether or not dummy variables will be scaled based on an initialization argument."""
+
         if self.scale_dummies:
             self.cols_scaled = self.cols.drop(labels=self.cols_nominal)
         else:
             self.cols_scaled = self.cols.drop(labels=self.cols_categorical)
 
-    #Chains the commands together for polynomial features, class balancing, and scaling.
     def data_preprocessing(self, balance_class=False, scale_type=False, poly_degree=False):
+        """Chains the commands together for polynomial features, class balancing, and scaling."""
+
         self.random_state = 1
         self.test_size = .2
         self.poly_degree = poly_degree
@@ -290,9 +314,10 @@ class DataPreprocessor(object):
 
         self.cols = self.cols.drop(labels=columns)
 
-#Prints the models, accuracy/f1 score.
+
 def evaluate_model(model, X_test, y_test):
     """Tests a model for accuracy, f1 score, precision, and recall"""
+    
     y_pred = model.predict(X_test)
     if y_test.unique().size > 2:
         f1 = f1_score(y_test, y_pred, average='micro')

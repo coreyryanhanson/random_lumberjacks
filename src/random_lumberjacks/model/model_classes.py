@@ -1,3 +1,4 @@
+import functools
 import pandas as pd
 import numpy as np
 import math
@@ -29,13 +30,26 @@ class DataPreprocessor(object):
     and scaling data."""
 
     def __init__(self, df, target, cat_features={}, cont_features={}, poly_features={}, create_dummies=False,
-                 scale_dummies=False):
-        self.df = df
+                 scale_dummies=False, random_state=None):
+        self.df = df.copy()
         self.create_dummies = create_dummies
         self.scale_dummies = scale_dummies
+        self.random_state = random_state
         self._set_features(target, cat_features, cont_features, poly_features)
         self.X = pd.concat([df[self.cols.drop(labels=self.cols_generated_dummies)], self.dummies], axis=1)
         self.y = df[target]
+
+
+    def _check_selection_mask(func):
+        """Decorator to to ensure columns from the dropped list to be removed when the function is called."""
+
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            if self.cols_dropped.size > 0:
+                self.selection = self.cols[self.col_mask]
+            return func(self, *args, **kwargs)
+        return wrapper
+
 
     def _set_features(self, target, cat_features, cont_features, poly_features):
         """Creates various attributes storing column names from specifically structured dictionaries for the
@@ -46,6 +60,8 @@ class DataPreprocessor(object):
         self._get_cont_features(cont_features)
         self.cols_initial = self.cols_continuous.union(self.cols_categorical, sort=False)
         self.cols = self.cols_initial
+        self.selection = self.cols
+        self.cols_dropped = pd.Index([])
         self.target = target
 
     def _get_cat_features(self, feature_dict):
@@ -128,13 +144,22 @@ class DataPreprocessor(object):
         self.cols_generated_dummies = self.dummies.columns
 
     def _manage_poly_renames(self, original, replacements):
+        """Ensures that new columns generated with the model classer function via transformations or dummy variables
+        are represented by their new column names in the dictionary of columns to have polynomial features."""
 
         if original in self.polynomial["columns"]:
             self.polynomial["columns"] = self.polynomial["columns"].drop(labels=[original])
             self.polynomial["columns"] = self.polynomial["columns"].union(replacements, sort=False)
 
     def _parse_poly_dict(self, poly_dict):
+        """Creates an attribute that tracks which columns will be queued for polynomial features."""
 
+        acceptable_methods = ["all", "choose", "eliminate", "linear", "no_dummies", "no_transformed"]
+        method = poly_dict.get("method", None)
+        if not method:
+            print(f'Missing "method" key in polynomial selection dictionary. Assuming all values will be transformed')
+        elif method not in acceptable_methods:
+            print(f"{method} is not an acceptable value for the polynomial dict. Choose from {acceptable_methods}")
         self.polynomial = {"method":poly_dict.get("method", "all")}
         self.polynomial["columns"] = pd.Index(poly_dict.get("columns", []))
 
@@ -295,11 +320,38 @@ class DataPreprocessor(object):
         else:
             self.cols_scaled = self.cols.drop(labels=self.cols_categorical)
 
-    def data_preprocessing(self, balance_class=False, scale_type=False, poly_degree=False):
+    def column_drop(self, columns, reverse=False):
+        """Drops unwanted fetures from the column selection"""
+
+        # Checks the reversed argument and sets the appropriate variables on whether the selction should be
+        # expanded or contracted.
+        if reverse:
+            function, description = self.cols_dropped.drop, "Removing"
+        else:
+            function, description = self.cols_dropped.union, "Adding"
+
+        if type(columns) == str:
+            columns = [columns]
+        columns = pd.Index(columns)
+        n_cols = columns.size
+
+        mask = self.cols.isin(columns)
+        dropped = self.cols[mask]
+
+        #Does a quick test if columns are an exact match, printing anything missing.
+        if mask.sum() != n_cols:
+            missing = np.setdiff1d(columns, self.cols).tolist()
+            print(f"The columns: {missing} are either missing or have not been entered in correctly.")
+        else:
+            print(f"{description} {dropped.to_numpy().tolist()}")
+
+        self.cols_dropped = function(dropped)
+        self.col_mask = self.cols.isin(self.cols_dropped) == False
+
+    def data_preprocessing(self, balance_class=False, scale_type=False, poly_degree=False, test_size=.2):
         """Chains the commands together for polynomial features, class balancing, and scaling."""
 
-        self.random_state = 1
-        self.test_size = .2
+        self.test_size = test_size
         self.poly_degree = poly_degree
         self.balance_class = balance_class
         self.scale_type = scale_type
@@ -308,16 +360,25 @@ class DataPreprocessor(object):
         self._class_imbalance()
         self._fit_scale()
         self._rescale()
+        self.selection = self.cols
 
-    def column_drop(self, columns):
-        """Drops unwanted fetures from the column selection"""
+    @_check_selection_mask
+    def get_X_train(self):
+        """Gets the X train data with updated column selection"""
 
-        self.cols = self.cols.drop(labels=columns)
+        return self.X_train[self.selection]
+
+    @_check_selection_mask
+    def get_X_test(self):
+        """Gets the X test data with updated column selection"""
+
+        return self.X_train[self.selection]
+
 
 
 def evaluate_model(model, X_test, y_test):
     """Tests a model for accuracy, f1 score, precision, and recall"""
-    
+
     y_pred = model.predict(X_test)
     if y_test.unique().size > 2:
         f1 = f1_score(y_test, y_pred, average='micro')
@@ -330,3 +391,5 @@ def evaluate_model(model, X_test, y_test):
     print("Accuracy:", accuracy)
     print("Precision:", precision)
     print("Recall:", recall)
+    print("Params:")
+    print(model.get_params())

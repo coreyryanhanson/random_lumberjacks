@@ -372,8 +372,15 @@ class DataPreprocessor(object):
     def get_X_test(self):
         """Gets the X test data with updated column selection"""
 
-        return self.X_train[self.selection]
+        return self.X_test[self.selection]
 
+    @_check_selection_mask
+    def get_df(self):
+        """recombines the entire dataset but excludes features outside of the updated column selection"""
+
+        X = pd.concat([self.X_train[self.selection], self.X_test[self.selection]], axis = 0)
+        y = pd.concat([self.y_train, self.y_test], axis=0)
+        return pd.concat([X, y], axis=1)
 
 
 def evaluate_model(model, X_test, y_test):

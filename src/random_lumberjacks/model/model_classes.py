@@ -30,13 +30,20 @@ class DataPreprocessor(object):
     and scaling data."""
 
     def __init__(self, df, target, cat_features={}, cont_features={}, poly_features={}, create_dummies=False,
-                 scale_dummies=False, random_state=None):
+                 scale_dummies=False, random_state=None, prediction_df=None):
         self.df = df.copy()
+        self.make_predictions = self._check_predictions(prediction_df)
+        if self.make_predictions:
+            self.prediction_df = prediction_df.copy()
+        else:
+            self.prediction_df = prediction_df
         self.create_dummies = create_dummies
         self.scale_dummies = scale_dummies
         self.random_state = random_state
         self._set_features(target, cat_features, cont_features, poly_features)
         self.X = pd.concat([df[self.cols.drop(labels=self.cols_generated_dummies)], self.dummies], axis=1)
+        if self.make_predictions:
+            self.prediction_df = pd.concat([self.prediction_df[self.cols.drop(labels=self.cols_generated_dummies)], self.pred_dummies], axis=1)
         self.y = df[target]
 
 
@@ -50,6 +57,10 @@ class DataPreprocessor(object):
             return func(self, *args, **kwargs)
         return wrapper
 
+    def _check_predictions(self, prediction_df):
+        """Tests for the presence of an additional df for predictions"""
+
+        return type(prediction_df) is not type(None)
 
     def _set_features(self, target, cat_features, cont_features, poly_features):
         """Creates various attributes storing column names from specifically structured dictionaries for the
@@ -125,13 +136,15 @@ class DataPreprocessor(object):
             else:
                 new_col_name = f"{column}_ln"
             self.df[new_col_name] = self.df[column].map(lambda x: math.log(x, base) if base else math.log(x))
+            if self.make_predictions:
+                self.prediction_df[new_col_name] = self.prediction_df[column].map(lambda x: math.log(x, base) if base else math.log(x))
             self._manage_poly_renames(column, pd.Index([new_col_name]))
             self.cols_logged = self.cols_logged.append(pd.Index([new_col_name]))
 
     def _generate_dummies(self):
         """Generates dummy variables from a list of categorical columns."""
 
-        self.dummies = pd.DataFrame()
+        self.dummies, self.pred_dummies = pd.DataFrame(), pd.DataFrame()
         print("Creating Dummies")
         for column in self.cols_nominal:
             unique = self.df[column].unique().size
@@ -141,6 +154,9 @@ class DataPreprocessor(object):
             new_dummies = pd.get_dummies(self.df[column], prefix=column, drop_first=True)
             self._manage_poly_renames(column, new_dummies.columns)
             self.dummies = pd.concat([self.dummies, new_dummies], axis=1)
+            if self.make_predictions:
+                pred_dummies = pd.get_dummies(self.prediction_df[column], prefix=column, drop_first=True)
+                self.pred_dummies = pd.concat([self.pred_dummies, pred_dummies], axis=1)
         self.cols_generated_dummies = self.dummies.columns
 
     def _manage_poly_renames(self, original, replacements):
@@ -203,6 +219,9 @@ class DataPreprocessor(object):
         X_test = self._transform_scale(self.X_test)
         self.X_train[columns] = X_train[columns]
         self.X_test[columns] = X_test[columns]
+        if self.make_predictions:
+            predictions = self._transform_scale(self.prediction_df)
+            self.prediction_df[columns] = predictions[columns]
 
     def _transform_scale(self, data):
         """Executes the scaling but preserves the index and returns it to a DataFrame."""
@@ -284,11 +303,19 @@ class DataPreprocessor(object):
             self.cols_polynomial = columns.drop(labels=orig_columns)
             self.X = pd.concat([self.X[self.cols_initial], poly_df[self.cols_polynomial]], axis=1)
             self.cols = self.cols_initial.union(self.cols_polynomial, sort=False)
+            if self.make_predictions:
+                pred_cont = self.prediction_df[orig_columns]
+                pred_cont_index = pred_cont.index
+                pred_poly = poly.fit_transform(pred_cont)
+                pred_poly_df = pd.DataFrame(pred_poly, index=pred_cont_index, columns=columns)
+                self.prediction_df = pd.concat([self.prediction_df[self.cols_initial], pred_poly_df[self.cols_polynomial]], axis=1)
         else:
             print("Skipping polynomial features")
             self.poly_degree = False
             self.cols_polynomial = pd.Index([])
             self.X = self.X[self.cols_initial]
+            if self.make_predictions:
+                self.prediction_df = self.prediction_df[self.cols_initial]
 
     def _choose_poly_columns(self):
         """Creates a column list for polynomial features including or excluding dummy variables and transformed features depending
@@ -381,6 +408,12 @@ class DataPreprocessor(object):
         X = pd.concat([self.X_train[self.selection], self.X_test[self.selection]], axis = 0)
         y = pd.concat([self.y_train, self.y_test], axis=0)
         return pd.concat([X, y], axis=1)
+
+    @_check_selection_mask
+    def get_predictions(self):
+        """Gets the X test data with updated column selection"""
+
+        return self.prediction_df[self.selection]
 
 
 def evaluate_model(model, X_test, y_test):

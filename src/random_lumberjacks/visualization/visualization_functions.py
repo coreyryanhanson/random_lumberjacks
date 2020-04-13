@@ -465,7 +465,8 @@ def trimmed_heatmap(df, columns, font_scale=1, annot=True, figsize=(15,10)):
 
     return plt.show()
 
-def show_feature_importances(model, df, figsize=(14, 12), font_scale=1, ascending=False, rows=12):
+def show_feature_importances(model, df, figsize=(14, 12), font_scale=1, ascending=False, rows=12, style="darkgrid"):
+    sns.set_style(style)
     f, ax = plt.subplots(figsize=figsize)
     sns.set(font_scale=font_scale)
     importance = pd.DataFrame(model.feature_importances_, index=df.columns).reset_index()

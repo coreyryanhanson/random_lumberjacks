@@ -300,7 +300,9 @@ class DataPreprocessor(object):
             X_poly = poly.fit_transform(X_cont)
             columns = pd.Index(poly.get_feature_names(X_cont.columns))
             poly_df = pd.DataFrame(X_poly, index=X_cont_index, columns=columns)
-            self.cols_polynomial = columns.drop(labels=orig_columns)
+            empty_cols = poly_df.loc[:, (poly_df == 0).all(axis=0)].columns
+            print(f"\n{empty_cols.to_numpy().tolist()}\nwere removed for containing 0 values\n")
+            self.cols_polynomial = columns.drop(labels=orig_columns.union(empty_cols))
             self.X = pd.concat([self.X[self.cols_initial], poly_df[self.cols_polynomial]], axis=1)
             self.cols = self.cols_initial.union(self.cols_polynomial, sort=False)
             if self.make_predictions:

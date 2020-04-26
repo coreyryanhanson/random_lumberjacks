@@ -14,7 +14,7 @@ RUN conda install --quiet --yes \
     jupyter labextension install @jupyterlab/toc --no-build && \
     jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
     jupyter labextension install @lckr/jupyterlab_variableinspector --no-build && \
-    jupyter labextension install @jupyterlab-theme-solarized-dark --no-build && \
+    jupyter labextension install jupyterlab-theme-solarized-dark --no-build && \
     jupyter labextension install @ijmbarr/jupyterlab_spellchecker --no-build && \
     jupyter lab build -y && \
     jupyter lab clean -y && \

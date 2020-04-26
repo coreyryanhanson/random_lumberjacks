@@ -4,8 +4,11 @@ LABEL maintainer "Corey Ryan Hanson"
 #Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/
 
 RUN conda install --quiet --yes \
-    'imbalanced-learn=0.6.2' \
-    'selenium=3.141.0' && \
+    'imbalanced-learn' \
+    'nltk' \
+    'selenium' \
+    'scrapy' \
+    'scikit-surprise ' && \
     conda update --all --quiet --yes && \
     conda clean --all -f -y && \
     jupyter labextension install @jupyterlab/toc --no-build && \

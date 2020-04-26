@@ -1,4 +1,4 @@
-FROM coreyhanson/anacuda-scipy
+FROM jupyter/scipy-notebook
 LABEL maintainer "Corey Ryan Hanson"
 
 #Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/

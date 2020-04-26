@@ -1,9 +1,12 @@
-FROM coreyhanson/anacuda:boosted
+FROM coreyhanson/anacuda-scipy
 LABEL maintainer "Corey Ryan Hanson"
 
-#Convienience/theme tweaks for the image.
+#Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/
 
-RUN conda update --all --quiet --yes && \
+RUN conda install --quiet --yes \
+    'imbalanced-learn=0.6.2' \
+    'selenium=3.141.0' && \
+    conda update --all --quiet --yes && \
     conda clean --all -f -y && \
     jupyter labextension install @jupyterlab/toc --no-build && \
     jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
@@ -14,6 +17,12 @@ RUN conda update --all --quiet --yes && \
     npm cache clean --force && \
     rm -rf /home/$NB_USER/.cache/yarn && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    rm -rf /home/$NB_USER/*
+    fix-permissions /home/$NB_USER
 
+RUN pip install \
+    'spotipy' \
+    'xgboost'
+
+WORKDIR $HOME/work
+
+CMD ["start-notebook.sh"]

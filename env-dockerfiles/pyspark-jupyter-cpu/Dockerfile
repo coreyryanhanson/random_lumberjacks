@@ -8,7 +8,8 @@ RUN conda install --quiet --yes \
     'nltk' \
     'selenium' \
     'scrapy' \
-    'scikit-surprise ' && \
+    'scikit-surprise ' \
+    'wordcloud' && \
     conda update --all --quiet --yes && \
     conda clean --all -f -y && \
     jupyter labextension install @jupyterlab/toc --no-build && \

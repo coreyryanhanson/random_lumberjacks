@@ -22,7 +22,7 @@ def main():
                  "pyspark-jupyter-cpu": "jupyter/pyspark-notebook",
                  "pyspark-jupyter-gpu": "coreyhanson/anacuda-pyspark"
                  }
-    neural_cpu = {"tensorflow-jupyter-cpu": "jupyter/scipy-notebook"}
+    neural_cpu = {"tensorflow-jupyter-cpu": "jupyter/tensorflow-notebook"}
     neural_gpu = {"tensorflow-jupyter-gpu": "anacuda-tensorflow"}
     
     base_lines = parse_parent("base-Dockerfile")

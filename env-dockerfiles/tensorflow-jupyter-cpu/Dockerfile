@@ -1,4 +1,4 @@
-FROM jupyter/scipy-notebook
+FROM jupyter/tensorflow-notebook
 LABEL maintainer "Corey Ryan Hanson"
 
 #Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/

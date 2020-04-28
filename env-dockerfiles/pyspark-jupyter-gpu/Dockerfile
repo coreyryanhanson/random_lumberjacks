@@ -6,9 +6,10 @@ LABEL maintainer "Corey Ryan Hanson"
 RUN conda install --quiet --yes \
     'imbalanced-learn' \
     'nltk' \
+    'plotly' \
     'selenium' \
-    'scrapy' \
     'scikit-surprise ' \
+    'scrapy' \
     'wordcloud' && \
     conda update --all --quiet --yes && \
     conda clean --all -f -y && \
@@ -24,7 +25,7 @@ RUN conda install --quiet --yes \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
-RUN pip install \
+RUN pip install --no-cache-dir \
     'spotipy' \
     'xgboost'
 

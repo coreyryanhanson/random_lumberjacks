@@ -22,17 +22,18 @@ def main():
                  "pyspark-jupyter-cpu": "jupyter/pyspark-notebook",
                  "pyspark-jupyter-gpu": "coreyhanson/anacuda-pyspark"
                  }
-    neural_cpu = {"tensorflow-jupyter-cpu": "jupyter/tensorflow-notebook"}
-    neural_gpu = {"tensorflow-jupyter-gpu": "anacuda-tensorflow"}
+    neural_dict = {"tensorflow-jupyter-cpu": "jupyter/tensorflow-notebook",
+                   "tensorflow-jupyter-gpu": "anacuda-tensorflow"
+                  }
     
     base_lines = parse_parent("base-Dockerfile")
-    neural_lines = parse_parent("neural-network-append")
+    appened_neural_lines = parse_parent("neural-network-append")
     
-    neural_cpu_lines = base_lines + neural_lines
-    neural_gpu_lines = base_lines + modify_lines(neural_lines, "keras", "keras-gpu")
+    neural_lines = base_lines + appened_neural_lines
     
-    modify_children(neural_cpu_lines, neural_cpu)
-    modify_children(neural_gpu_lines, neural_gpu)
+    modify_children(base_lines, file_dict)
+    modify_children(neural_lines, neural_dict)
+    
     
     print("Files written")
 

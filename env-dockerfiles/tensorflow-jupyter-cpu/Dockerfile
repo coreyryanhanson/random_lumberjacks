@@ -34,8 +34,7 @@ WORKDIR $HOME/work
 CMD ["start-notebook.sh"]
 
 RUN conda install --quiet --yes \
-    'pillow' \
-    'keras' && \
+    'pillow' && \
     conda update --all --quiet --yes && \
     conda clean --all -f -y && \
     jupyter lab build -y && \

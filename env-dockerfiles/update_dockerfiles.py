@@ -23,7 +23,7 @@ def main():
                  "pyspark-jupyter-gpu": "coreyhanson/anacuda-pyspark"
                  }
     neural_dict = {"tensorflow-jupyter-cpu": "jupyter/tensorflow-notebook",
-                   "tensorflow-jupyter-gpu": "anacuda-tensorflow"
+                   "tensorflow-jupyter-gpu": "coreyhanson/anacuda-tensorflow"
                   }
     
     base_lines = parse_parent("base-Dockerfile")

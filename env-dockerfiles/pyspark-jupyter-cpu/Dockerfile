@@ -4,6 +4,7 @@ LABEL maintainer "Corey Ryan Hanson"
 #Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/
 
 RUN conda install --quiet --yes \
+    'fbprophet' \
     'imbalanced-learn' \
     'nltk' \
     'plotly' \

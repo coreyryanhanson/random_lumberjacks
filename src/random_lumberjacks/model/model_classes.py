@@ -253,21 +253,7 @@ class DataPreprocessor(object):
     def _simple_resample(self, df, down=False):
         """Performs a random choice to upsample/downsample all values to those with the maximum or minimum counts."""
 
-        target = self.target
-        groups = [item for item in df[target].unique()]
-        counts = {group: df[df[target] == group][target].count() for group in groups}
-        most, least = max(counts, key=counts.get), min(counts, key=counts.get)
-        if down == False:
-            goal, samples = most, counts[most]
-        else:
-            goal, samples = least, counts[least]
-        sample_queue = [remaining for remaining in groups if remaining != goal]
-        new_df = df[df[target]==goal]
-        for sample in sample_queue:
-            current = df[df[target]==sample]
-            resampled = resample(current, replace=True, n_samples=samples, random_state=self.random_state)
-            new_df = pd.concat([new_df, resampled])
-        self.X_train, self.y_train = new_df.drop(self.target, axis=1), new_df[self.target]
+        self.X_train, self.y_train = simple_resample_df(df, target=self.target, down=down, random_state=self.random_state)
 
     def _smote_data(self):
         """Performs a SMOTE upsampling of the data. If there are nominal columns detected, it will change SMOTE algorithms."""
@@ -435,3 +421,33 @@ def evaluate_model(model, X_test, y_test):
     print("Recall:", recall)
     print("Params:")
     print(model.get_params())
+
+
+def simple_resample_array(array, labels, down=False, random_state=144):
+    """Resamples a numpy array through downsampling or upsampling while maintaining to the dominant (or least dominant) class.
+    Mpte: This function calls upon it's pandas based counterpart out of expedience. At some point in the future, my code
+    consolidation may have me reverse this dependence to remove the intermediate conversions if it makes sense to do so."""
+
+    df, target = pd.DataFrame(array), "target"
+    df = pd.concat([df, pd.Series(labels, name=target)], axis=1)
+    df_x, df_y = simple_resample(df, target, down=down, random_state=random_state)
+    return df_x.to_numpy(), df_y.to_numpy(),
+
+
+def simple_resample_df(df, target, down=False, random_state=144):
+    """Performs a random choice to upsample/downsample all values to those with the maximum or minimum counts."""
+
+    groups = [item for item in df[target].unique()]
+    counts = {group: df[df[target] == group][target].count() for group in groups}
+    most, least = max(counts, key=counts.get), min(counts, key=counts.get)
+    if down == False:
+        goal, samples = most, counts[most]
+    else:
+        goal, samples = least, counts[least]
+    sample_queue = [remaining for remaining in groups if remaining != goal]
+    new_df = df[df[target]==goal]
+    for sample in sample_queue:
+        current = df[df[target]==sample]
+        resampled = resample(current, replace=True, n_samples=samples, random_state=random_state)
+        new_df = pd.concat([new_df, resampled])
+    return new_df.drop(target, axis=1), new_df[target]

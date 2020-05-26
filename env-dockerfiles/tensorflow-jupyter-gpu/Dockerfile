@@ -36,6 +36,7 @@ CMD ["start-notebook.sh"]
 
 RUN conda install --quiet --yes \
     'pillow' && \
+    conda install --quiet --yes -c orbingol geomdl && \
     conda update --all --quiet --yes && \
     conda clean --all -f -y && \
     jupyter lab build -y && \

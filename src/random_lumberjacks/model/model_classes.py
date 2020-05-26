@@ -423,18 +423,18 @@ def evaluate_model(model, X_test, y_test):
     print(model.get_params())
 
 
-def simple_resample_array(array, labels, down=False, random_state=144):
+def simple_resample_array(array, labels, down=False, random_state=None):
     """Resamples a numpy array through downsampling or upsampling while maintaining to the dominant (or least dominant) class.
     Mpte: This function calls upon it's pandas based counterpart out of expedience. At some point in the future, my code
     consolidation may have me reverse this dependence to remove the intermediate conversions if it makes sense to do so."""
 
     df, target = pd.DataFrame(array), "target"
     df = pd.concat([df, pd.Series(labels, name=target)], axis=1)
-    df_x, df_y = simple_resample(df, target, down=down, random_state=random_state)
+    df_x, df_y = simple_resample_df(df, target, down=down, random_state=random_state)
     return df_x.to_numpy(), df_y.to_numpy(),
 
 
-def simple_resample_df(df, target, down=False, random_state=144):
+def simple_resample_df(df, target, down=False, random_state=None):
     """Performs a random choice to upsample/downsample all values to those with the maximum or minimum counts."""
 
     groups = [item for item in df[target].unique()]

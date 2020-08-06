@@ -11,12 +11,16 @@ RUN conda update --all --quiet --yes && \
     fix-permissions /home/$NB_USER
 
 RUN conda install --quiet --yes -c conda-forge \
-    'imbalanced-learn' \
+    'fiona' \
+    'geopandas' \
+    'geoplot' \
     'nltk' \
     'PyGithub' \
+    'pyproj' \
     'scikit-surprise ' \
     'selenium' \
     'scrapy' \
+    'shapely' \
     'wordcloud' && \
     conda install --quiet --yes -c plotly \
     'plotly' && \

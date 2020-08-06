@@ -10,8 +10,13 @@ RUN conda update --all --quiet --yes && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
-RUN conda install --quiet --yes -c conda-forge \
-    'imbalanced-learn' \
+RUN conda install --quiet --yes -c main \
+    'fiona' \
+    'geopandas' \
+    'pyproj' \
+    'shapely' && \
+    conda install --quiet --yes -c conda-forge \
+    'geoplot' \
     'nltk' \
     'PyGithub' \
     'scikit-surprise ' \

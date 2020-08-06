@@ -23,7 +23,7 @@ def main():
                  "pyspark-jupyter-gpu": "coreyhanson/anacuda-pyspark"
                  }
     neural_dict = {"tensorflow-jupyter-cpu": "jupyter/tensorflow-notebook",
-                   "tensorflow-jupyter-gpu": "coreyhanson/anacuda-tensorflow"
+                   "tensorflow-jupyter-gpu": "coreyhanson/anacuda-tensorflow",
                    "pytorch-jupyter-gpu": "coreyhanson/anacuda-pytorch"
                   }
 

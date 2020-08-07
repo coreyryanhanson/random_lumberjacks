@@ -4,6 +4,7 @@ LABEL maintainer "Corey Ryan Hanson"
 #Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/
 
 RUN conda install --quiet --yes -c conda-forge \
+    'fbprophet' \
     'fiona' \
     'geopandas' \
     'geoplot' \
@@ -27,16 +28,8 @@ RUN conda install --quiet --yes -c conda-forge \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
-# This block contains dependencies required to fix broken pip install of fbprophet.
-RUN pip install --no-cache-dir \
-    'convertdate' \
-    'LunarCalendar' \
-    'holidays' \
-    'pystan'
-
 # Packages that won't cleanly install through Anaconda.
 RUN pip install --no-cache-dir \
-    'fbprophet' \
     'xgboost'
 
 WORKDIR $HOME/work

@@ -1,19 +1,13 @@
-FROM jupyter/pyspark-notebook
+FROM jupyter/scipy-notebook
 LABEL maintainer "Corey Ryan Hanson"
 
 #Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/
 
 RUN conda install --quiet --yes -c conda-forge \
-    'fiona' \
-    'geopandas' \
-    'geoplot' \
-    'nltk' \
+    'PyGithub' \
     'pyproj' \
-    'scikit-surprise ' \
-    'shapely' \
-    'wordcloud' && \
-    conda install --quiet --yes -c plotly \
-    'plotly' && \
+    'selenium' \
+    'scrapy' && \
     conda clean --all -f -y && \
     jupyter labextension install @jupyterlab/toc --no-build && \
     jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
@@ -27,17 +21,10 @@ RUN conda install --quiet --yes -c conda-forge \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
-# This block contains dependencies required to fix broken pip install of fbprophet.
-RUN pip install --no-cache-dir \
-    'convertdate' \
-    'LunarCalendar' \
-    'holidays' \
-    'pystan'
-
 # Packages that won't cleanly install through Anaconda.
 RUN pip install --no-cache-dir \
-    'fbprophet' \
-    'xgboost'
+    'spotipy' \
+    'stravalib'
 
 WORKDIR $HOME/work
 

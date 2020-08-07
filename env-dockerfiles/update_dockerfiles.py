@@ -26,15 +26,19 @@ def main():
                    "tensorflow-jupyter-gpu": "coreyhanson/anacuda-tensorflow",
                    "pytorch-jupyter-gpu": "coreyhanson/anacuda-pytorch"
                   }
+    scraping_dict = {"scraping-jupyter-cpu": "jupyter/scipy-notebook",
+                     "scraping-jupyter-gpu": "coreyhanson/anacuda-scipy",
+                 }
 
     base_lines = parse_parent("base-Dockerfile")
+    scraping_lines = parse_parent("scraping-Dockerfile")
     appened_neural_lines = parse_parent("neural-network-append")
 
     neural_lines = base_lines + appened_neural_lines
 
     modify_children(base_lines, file_dict)
     modify_children(neural_lines, neural_dict)
-
+    modify_children(scraping_lines, scraping_dict)
 
     print("Files written")
 

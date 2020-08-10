@@ -1,10 +1,10 @@
 
-RUN conda install --quiet --yes \
+RUN source activate $CONDA_ROOT && \
+    conda install --quiet --yes -c conda-forge \
     'pillow' && \
-    conda install --quiet --yes -c orbingol geomdl && \
+    conda install --quiet --yes -c orbingol \
+    'geomdl' && \
     conda clean --all -f -y && \
-    jupyter lab build -y && \
-    jupyter lab clean -y && \
     npm cache clean --force && \
     rm -rf /home/$NB_USER/.cache/yarn && \
     fix-permissions $CONDA_DIR && \

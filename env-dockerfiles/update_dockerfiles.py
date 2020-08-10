@@ -32,12 +32,15 @@ def main():
 
     base_lines = parse_parent("base-Dockerfile")
     scraping_lines = parse_parent("scraping-Dockerfile")
-    appened_neural_lines = parse_parent("neural-network-append")
+    append_neural_lines = parse_parent("neural-network-append")
+    append_jupyter_ext_lines = parse_parent("jupyter_extensions-append")
 
-    neural_lines = base_lines + appened_neural_lines
+    regular_doc = base_lines + append_jupyter_ext_lines
+    neural_doc = base_lines + append_neural_lines + append_jupyter_ext_lines
+    scraping_doc = scraping_lines + append_jupyter_ext_lines
 
-    modify_children(base_lines, file_dict)
-    modify_children(neural_lines, neural_dict)
+    modify_children(regular_doc, file_dict)
+    modify_children(neural_doc, neural_dict)
     modify_children(scraping_lines, scraping_dict)
 
     print("Files written")

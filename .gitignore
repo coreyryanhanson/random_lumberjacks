@@ -1,2 +1,4 @@
 env-dockerfiles/test
-/env-dockerfiles/.ipynb_checkpoints
+**/.ipynb_checkpoints
+**/__pycache__
+**.wh.

@@ -6,6 +6,20 @@ def parse_fixed_noaa_data(bstring, params):
     
     return [bstring[param[1]:param[2]] for param in params]
 
+def parse_optional_noaa_data(bstring, params):
+    """Loops thrrough a specially formatted ordered dict of optional parameters capturing their values or nans
+    depending on whether or not they are encountered."""
+    
+    results = []
+    for param in params:
+        sliced = extract_noaa_optional_str(bstring, param, params[param][0])
+        if sliced:
+            values = parse_fixed_noaa_data(sliced, params[param][1])
+        else:
+            values = [np.nan] * len(params[param][1])
+        results.extend(values)
+    return results
+
 def noa_df_convert_nans(df, column, nan_val):
     """Checks the dataframe of raw strings for specific values to replace with nans."""
     
@@ -33,9 +47,16 @@ def noa_df_convert_datetime(df, column, dtype):
     if dtype == "datetime":
         df[column] = pd.to_datetime(df[column], format="%Y%m%d%H%M")
 
-def fix_noaa_df_dtypes(df, params):
+def fix_noaa_df_dtypes(df, fixed_params, optional_params=None):
     """Goes through a raw dataframe from parsed NOAA strings, converts the datatypes, and adds nans based on a
     parameter list."""
+    
+    params = fixed_params
+    
+    # Adds conversions to specified optional parameters if they exist.
+    if optional_params:
+        for subset in optional_params:
+            params.extend([item for item in optional_params[subset][1]])
     
     for param in params:
         col, dtype, nan_val, scalar = param[0], param[3], param[4], param[5]

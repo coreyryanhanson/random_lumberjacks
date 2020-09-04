@@ -38,7 +38,7 @@ def noa_df_convert_nums(df, column, dtype, scalar):
 def noa_df_convert_strings(df, column, dtype):
     """Removes the byte encoding on the string and datetime columns of the dataframe of raw strings ."""
     
-    if dtype == "str" or dtype == "datetime":
+    if (dtype == "str" or dtype == "datetime") and not df[column].isnull().all():
         df[column] = df[column].str.decode("utf-8")
 
 def noa_df_convert_datetime(df, column, dtype):
@@ -51,7 +51,7 @@ def fix_noaa_df_dtypes(df, fixed_params, optional_params=None):
     """Goes through a raw dataframe from parsed NOAA strings, converts the datatypes, and adds nans based on a
     parameter list."""
     
-    params = fixed_params
+    params = fixed_params.copy()
     
     # Adds conversions to specified optional parameters if they exist.
     if optional_params:

@@ -4,7 +4,7 @@ LABEL maintainer "Corey Ryan Hanson"
 #Installing libraries not included in the Jupyter scipy notebook ://hub.docker.com/r/jupyter/scipy-notebook/
 
 # Base files accessible all environments
-
+hyperopt
 RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
     'imbalanced-learn' \
@@ -12,6 +12,7 @@ RUN source activate $CONDA_ROOT && \
     'fiona' \
     'geopandas' \
     'geoplot' \
+    'hyperopt' \
     'libnetcdf' \
     'nltk' \
     'plotly' \

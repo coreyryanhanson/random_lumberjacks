@@ -11,7 +11,7 @@ RUN source activate $CONDA_ROOT && \
     'fbprophet' \
     'fiona' \
     'geopandas' \
-    'geoplot' \
+    'geoplot=0.4.1' \
     'hyperopt' \
     'libnetcdf' \
     'nltk' \

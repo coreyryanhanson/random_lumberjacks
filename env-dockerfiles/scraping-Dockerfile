@@ -5,7 +5,6 @@ LABEL maintainer "Corey Ryan Hanson"
 
 RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
-    'pycoingecko' \
     'PyGithub' \
     'pyproj' \
     'selenium' \
@@ -19,6 +18,7 @@ RUN source activate $CONDA_ROOT && \
 # Packages that won't cleanly install through Anaconda.
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
+    'pycoingecko' \
     'spotipy' \
     'stravalib'
 

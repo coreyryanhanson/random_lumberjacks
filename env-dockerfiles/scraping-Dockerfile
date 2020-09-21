@@ -21,8 +21,15 @@ RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
     'pycoingecko' \
     'spotipy' \
-    'stravalib' \
-    'twitter_scraper'
+    'stravalib' 
+
+RUN source activate $CONDA_ROOT && \
+    git clone https://github.com/bisguzar/twitter-scraper.git && \
+    cd twitter-scraper && \
+    git checkout 8bab41b2b56499e64bba1c0d3d58a2edfa98af4a && \
+    python setup.py install && \
+    cd .. && \
+    rm -rf twitter-scraper
 
 WORKDIR $HOME/work
 

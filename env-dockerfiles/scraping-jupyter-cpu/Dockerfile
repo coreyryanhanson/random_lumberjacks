@@ -5,6 +5,7 @@ LABEL maintainer "Corey Ryan Hanson"
 
 RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
+    'pycoingecko' \
     'PyGithub' \
     'pyproj' \
     'selenium' \

@@ -8,7 +8,8 @@ RUN source activate $CONDA_ROOT && \
     'PyGithub' \
     'pyproj' \
     'selenium' \
-    'scrapy' && \
+    'scrapy' \
+    'tweepy' && \
     conda clean --all -f -y && \
     npm cache clean --force && \
     rm -rf /home/$NB_USER/.cache/yarn && \
@@ -20,7 +21,8 @@ RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
     'pycoingecko' \
     'spotipy' \
-    'stravalib'
+    'stravalib' \
+    'twitter_scraper'
 
 WORKDIR $HOME/work
 

@@ -41,7 +41,7 @@ def main():
 
     modify_children(regular_doc, file_dict)
     modify_children(neural_doc, neural_dict)
-    modify_children(scraping_lines, scraping_dict)
+    modify_children(scraping_doc, scraping_dict)
 
     print("Files written")
 

@@ -25,7 +25,7 @@ RUN source activate $CONDA_ROOT && \
     'stravalib'
 
 RUN source activate $CONDA_ROOT && \
-    pip install --no-cache-dir -e \
+    pip install --no-cache-dir --user -e \
     git+https://github.com/twintproject/twint.git@origin/master#egg=twint
 
 WORKDIR $HOME/work

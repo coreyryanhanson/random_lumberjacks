@@ -22,8 +22,11 @@ RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
     'pycoingecko' \
     'spotipy' \
-    'stravalib' \
-    'twint'
+    'stravalib'
+
+RUN source activate $CONDA_ROOT && \
+    pip install --no-cache-dir -e \
+    git+https://github.com/twintproject/twint.git@origin/master#egg=twint
 
 WORKDIR $HOME/work
 

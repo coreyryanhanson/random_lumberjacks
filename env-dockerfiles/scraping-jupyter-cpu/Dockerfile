@@ -5,7 +5,7 @@ LABEL maintainer "Corey Ryan Hanson"
 
 RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
-    'nest_asyncio' \
+    'nest-asyncio' \
     'PyGithub' \
     'pyproj' \
     'selenium' \

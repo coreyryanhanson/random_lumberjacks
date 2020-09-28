@@ -26,7 +26,7 @@ RUN source activate $CONDA_ROOT && \
 
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir --user --upgrade \
-    git+https://github.com/twintproject/twint.git@origin/master#egg=twint
+    git+https://github.com/yunusemrecatalcam/twint.git@twitter_legacy2
 
 WORKDIR $HOME/work
 

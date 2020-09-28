@@ -10,6 +10,7 @@ RUN source activate $CONDA_ROOT && \
     'imbalanced-learn' \
     'fbprophet' \
     'fiona' \
+    'gensim' \
     'geopandas' \
     'geoplot=0.4.1' \
     'hyperopt' \
@@ -19,6 +20,8 @@ RUN source activate $CONDA_ROOT && \
     'pyproj' \
     'scikit-surprise ' \
     'shapely' \
+    'spacy' \
+    'textblob ' \
     'wordcloud' && \
     conda clean --all -f -y && \
     npm cache clean --force && \

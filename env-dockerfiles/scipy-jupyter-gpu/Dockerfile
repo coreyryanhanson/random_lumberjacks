@@ -34,6 +34,10 @@ RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
     'xgboost'
 
+# Additional pip packages for spaCy models
+RUN source activate $CONDA_ROOT && \
+    python -m spacy download en_core_web_sm
+
 WORKDIR $HOME/work
 
 CMD ["start-notebook.sh"]

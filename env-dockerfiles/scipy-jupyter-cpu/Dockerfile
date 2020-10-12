@@ -10,19 +10,14 @@ RUN source activate $CONDA_ROOT && \
     'imbalanced-learn' \
     'fbprophet' \
     'fiona' \
-    'gensim' \
     'geopandas' \
     'geoplot=0.4.1' \
     'hyperopt' \
     'libnetcdf' \
-    'nltk' \
     'plotly' \
     'pyproj' \
     'scikit-surprise ' \
-    'shapely' \
-    'spacy' \
-    'textblob ' \
-    'wordcloud' && \
+    'shapely'  && \
     conda clean --all -f -y && \
     npm cache clean --force && \
     rm -rf /home/$NB_USER/.cache/yarn && \
@@ -33,6 +28,24 @@ RUN source activate $CONDA_ROOT && \
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
     'xgboost'
+
+# NLP modules
+RUN source activate $CONDA_ROOT && \
+    conda install --quiet --yes -c conda-forge \
+    'gensim' \
+    'nltk' \
+    'spacy' \
+    'textblob ' \
+    'wordcloud' && \
+    conda clean --all -f -y && \
+    npm cache clean --force && \
+    rm -rf /home/$NB_USER/.cache/yarn && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+
+RUN source activate $CONDA_ROOT && \
+    pip install --no-cache-dir \
+    'pycontractions'
 
 # Additional pip packages for spaCy models
 RUN source activate $CONDA_ROOT && \

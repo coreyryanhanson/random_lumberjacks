@@ -45,7 +45,8 @@ RUN source activate $CONDA_ROOT && \
 
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
-    'pycontractions'
+    'pycontractions' \
+    'spacymoji'
 
 # Additional pip packages for spaCy models
 RUN source activate $CONDA_ROOT && \

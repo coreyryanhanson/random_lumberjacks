@@ -45,6 +45,7 @@ RUN source activate $CONDA_ROOT && \
 
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
+    'better_profanity==0.6.1' \
     'pycontractions' \
     'spacymoji'
 

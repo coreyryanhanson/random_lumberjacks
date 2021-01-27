@@ -58,8 +58,7 @@ WORKDIR $HOME/work
 CMD ["start-notebook.sh"]
 
 # Customizations for Jupyter notebook.
-RUN jupyter labextension install @jupyterlab/toc --no-build && \
-    jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
+RUN jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
     jupyter labextension install @lckr/jupyterlab_variableinspector --no-build && \
     jupyter labextension install jupyterlab-theme-solarized-dark --no-build && \
     jupyter labextension install @ijmbarr/jupyterlab_spellchecker --no-build && \

@@ -69,8 +69,7 @@ RUN source activate $CONDA_ROOT && \
     fix-permissions /home/$NB_USER
 
 # Customizations for Jupyter notebook.
-RUN jupyter labextension install @jupyterlab/toc --no-build && \
-    jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
+RUN jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
     jupyter labextension install @lckr/jupyterlab_variableinspector --no-build && \
     jupyter labextension install jupyterlab-theme-solarized-dark --no-build && \
     jupyter labextension install @ijmbarr/jupyterlab_spellchecker --no-build && \

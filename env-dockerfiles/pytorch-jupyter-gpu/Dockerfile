@@ -8,6 +8,7 @@ LABEL maintainer "Corey Ryan Hanson"
 RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
     'imbalanced-learn' \
+    'ipython-sql' \
     'fbprophet' \
     'fiona' \
     'geopandas' \
@@ -15,6 +16,7 @@ RUN source activate $CONDA_ROOT && \
     'hyperopt' \
     'libnetcdf' \
     'plotly' \
+    'psycopg2' \
     'pyproj' \
     'scikit-surprise ' \
     'shapely'  && \
@@ -34,6 +36,7 @@ RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
     'gensim' \
     'nltk' \
+    'pyldavis' \
     'spacy' \
     'textblob ' \
     'wordcloud' && \

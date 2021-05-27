@@ -5,7 +5,9 @@ LABEL maintainer "Corey Ryan Hanson"
 
 RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
+    'ipython-sql' \
     'nest-asyncio' \
+    'psycopg2' \
     'PyGithub' \
     'pyproj' \
     'selenium' \

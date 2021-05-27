@@ -82,13 +82,11 @@ RUN source activate base && \
     # Also activate ipywidgets extension for JupyterLab
     # Check this URL for most recent compatibilities
     # https://github.com/jupyter-widgets/ipywidgets/tree/master/packages/jupyterlab-manager
-    jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    jupyter labextension install jupyter-matplotlib --no-build && \
-    jupyter labextension install @aquirdturtle/collapsible_headings --no-build && \
-    jupyter labextension install @lckr/jupyterlab_variableinspector --no-build && \
-    jupyter labextension install jupyterlab-theme-solarized-dark --no-build && \
-    jupyter labextension install @ijmbarr/jupyterlab_spellchecker --no-build && \
-    jupyter lab build -y && \
+    jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+                                 jupyter-matplotlib \
+                                 @aquirdturtle/collapsible_headings \
+                                 jupyterlab-theme-solarized-dark \
+                                 @ijmbarr/jupyterlab_spellchecker && \
     jupyter lab clean -y && \
     npm cache clean --force && \
     rm -rf "/home/${NB_USER}/.cache/yarn" && \

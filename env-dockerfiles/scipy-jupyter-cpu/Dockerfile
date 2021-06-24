@@ -34,7 +34,7 @@ RUN source activate $CONDA_ROOT && \
 # NLP modules
 RUN source activate $CONDA_ROOT && \
     conda install --quiet --yes -c conda-forge \
-    'gensim=3.8.3' \
+    'gensim \
     'nltk' \
     'pyldavis' \
     'spacy' \

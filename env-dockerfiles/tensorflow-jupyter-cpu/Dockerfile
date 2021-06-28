@@ -48,6 +48,7 @@ RUN source activate $CONDA_ROOT && \
 
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
+    git+https://github.com/coreyryanhanson/language-check.git@75fb06d80b881e22672e332c7c10575a159f78b0 \
     'better_profanity==0.6.1' \
     'pycontractions' \
     'spacymoji'

@@ -28,6 +28,7 @@ RUN source activate $CONDA_ROOT && \
 # Packages that won't cleanly install through Anaconda.
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
+    'geoalchemy2' \
     'ipython-sql' \
     'xgboost'
 

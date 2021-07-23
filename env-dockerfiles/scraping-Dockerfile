@@ -10,6 +10,7 @@ RUN source activate $CONDA_ROOT && \
     'PyGithub' \
     'pyproj' \
     'selenium' \
+    'shapely' \
     'scrapy' \
     'tweepy' && \
     conda clean --all -f -y && \
@@ -21,7 +22,9 @@ RUN source activate $CONDA_ROOT && \
 # Packages that won't cleanly install through Anaconda.
 RUN source activate $CONDA_ROOT && \
     pip install --no-cache-dir \
+    'geoalchemy2' \
     'ipython-sql' \
+    'praw' \
     'pycoingecko' \
     'spotipy' \
     'stravalib'
